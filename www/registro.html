@@ -1,0 +1,78 @@
+<!-- We don't need a full layout in this file because this page will be parsed with Ajax.  -->
+<div class="page" data-name="registrarse">
+    <div class="navbar">
+        <div class="navbar-inner sliding">
+        <div class="left">
+            <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Back</span>
+            </a>
+        </div>
+        <div class="title">Registro</div>
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="block-title">Registro</div>
+        <form class="list form-store-data" id="my-form">
+            <ul>
+              <li>
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Nombre</div>
+                    <div class="item-input-wrap">
+                      <input id="nombre" type="text" name="name" placeholder="Tu nombre" />
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Apellido</div>
+                    <div class="item-input-wrap">
+                      <input  id="apellido" type="text" name="name" placeholder="Tu apellido" />
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">E-mail</div>
+                    <div class="item-input-wrap">
+                      <input id="email" type="email" name="email" placeholder="E-mail" />
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Contraseña</div>
+                    <div class="item-input-wrap">
+                      <input id="password" type="password" name="password" placeholder="Tu contraseña" />
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Rol</div>
+                    <div class="item-input-wrap">
+                      <select name="gender">
+                        <option value="admin" selected="selected">Administrador</option>
+                        <option value="mecanico">mecanico</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <div class="block block-strong row">
+                <div class="col"><a class="button button-fill convert-form-to-data" href="#" id="reg-usua">Registrar</a></div>
+                <div class="col"><a class="button button-fill fill-form-from-data" href="#" id="cancelar">Cancelar</a></div>
+              </div>
+            </ul>
+          </form>
+    </div>
+</div>

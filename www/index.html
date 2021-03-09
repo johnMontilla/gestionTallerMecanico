@@ -10,7 +10,7 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
 
     <!-- Required meta tags-->
     <meta charset="utf-8">
@@ -41,63 +41,88 @@
         <div class="view view-main">
        
             <!-- Top Navbar -->
-            <div class="navbar">
+            <!-- <div class="navbar">
                 <div class="navbar-bg"></div>
                 <div class="navbar-inner">
                     <div class="left"><i class="icon icon-back"></i></div>
                     <div class="title">Page Title</div>
                     <div class="right"><i class="icon icon-forward"></i></div>
                 </div>
-            </div>
+            </div> -->
     
             <!-- Toolbar -->
-            <div class="toolbar toolbar-bottom">
-                <div class="toolbar-inner">
+            <!-- <div class="toolbar toolbar-bottom">
+                <div class="toolbar-inner"> -->
                 <!-- Toolbar links -->
-                <a href="#" class="link">Link 1</a>
+                <!-- <a href="#" class="link">Link 1</a>
                 <a href="#" class="link">Link 2</a>
                 </div>
-            </div>
+            </div> -->
         
         <!-- Initial Page, "data-name" contains page name -->
             <div data-name="index" class="page">
                 <!-- Scrollable page content -->
                 <div class="page-content">
-                    <div class="block">
-                        <p>Page content goes here</p>
-                        <!-- Link to another page -->
-                        <a href="/about/" data-view=".page-content">About app</a>
-
-                        <!-- In data-popup attribute we specify CSS selector of popup we need to open -->
-                        <p><a href="#" data-popup=".my-popup" class="popup-open">Open Popup</a></p>
-
-                        <!-- And somewhere in DOM -->
-                        <div class="popup my-popup">
-                            <div class="view">
-                                <div class="page">
-                                    <div class="navbar">
-                                        <div class="navbar-bg"></div>
-                                        <div class="navbar-inner">
-                                            <div class="title">Popup</div>
-                                            <div class="right">
-                                                <!-- Link to close popup -->
-                                                <a class="link popup-close">Close</a>
-                                            </div>
-                                        </div>
+                    <div class="page no-navbar no-toolbar no-swipeback">
+                        <div class="page-content login-screen-content">
+                          <div class="login-screen-title">GTM</div>
+                          <form>
+                            <div class="list">
+                              <ul>
+                                <li class="item-content item-input">
+                                  <div class="item-inner">
+                                    <div class="item-title item-label">Usuario</div>
+                                    <div class="item-input-wrap">
+                                      <input id="email-ingreso" type="text" name="username" placeholder="Tu email" />
                                     </div>
-                                    <div class="page-content">
-                                      ...
+                                  </div>
+                                </li>
+                                <li class="item-content item-input">
+                                  <div class="item-inner">
+                                    <div class="item-title item-label">Contraseña</div>
+                                    <div class="item-input-wrap">
+                                      <input id="pass-ingreso" type="password" name="password" placeholder="Tu contraseña" />
                                     </div>
-                                </div>
+                                  </div>
+                                </li>
+                              </ul>
                             </div>
+                            <div class="list">
+                              <ul>
+                                <li><a href="#" class="list-button" id="ingreso">Sign In</a></li>
+                                <li><a href="#" class="list-button" id="registro">Registrarse</a></li>
+                              </ul>
+                              
+                            </div>
+                          </form>
                         </div>
-                    </div>
+                      </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
 
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+     
+<script src="https://www.gstatic.com/firebasejs/8.2.7/firebase-auth.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBaNYSWHNrAeGLtYI6tA82zMgXeMAm-8yk",
+    authDomain: "taller-mecanico-4b4bc.firebaseapp.com",
+    projectId: "taller-mecanico-4b4bc",
+    storageBucket: "taller-mecanico-4b4bc.appspot.com",
+    messagingSenderId: "985406962175",
+    appId: "1:985406962175:web:0804294c129d310f530fca"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/framework7-bundle.min.js"></script>
     <script type="text/javascript" src="js/my-app.js"></script>

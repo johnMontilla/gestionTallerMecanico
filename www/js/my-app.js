@@ -16,8 +16,8 @@ var app = new Framework7({
     // Add default routes
     routes: [
       {
-        path: '/about/',
-        url: 'about.html',
+        path: '/registro/',
+        url: 'registro.html',
       },
     ]
     // ... other parameters
@@ -34,11 +34,58 @@ $$(document).on('deviceready', function() {
 $$(document).on('page:init', function (e) {
     // Do something here when page loaded and initialized
     console.log(e);
+    
+})
+
+$$(document).on('page:init', '.page[data-name="index"]', function(e) {
+  // Do something here when page with data-name="about" attribute loaded and initialized
+  console.log(e);
+  
+  $$('#registro').on('click', function(){
+    console.log('ingrese a page init ')
+    mainView.router.navigate('/registro/');
+  });
+
+  $$('#ingreso').on('click', FnIngresar)
 })
 
 // Option 2. Using live 'page:init' event handlers for each page
-$$(document).on('page:init', '.page[data-name="about"]', function (e) {
+$$(document).on('page:init', '.page[data-name="registrarse"]', function (e) {
     // Do something here when page with data-name="about" attribute loaded and initialized
     console.log(e);
-    alert('Hello');
+    $$('#reg-usua').on('click', FnRegistrar)
 })
+
+function FnRegistrar(){
+  var email = $$('#email').value();
+  var password= $$('#password').value();
+ 
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then( function() {
+           alert("registro ok");
+
+      })
+
+      .catch(function(error) {          
+      // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message; 
+          if (errorCode == 'auth/weak-password') {
+              alert('Clave muy débil.');
+          } else {
+              alert(errorCode + "|" + errorMessage);
+          }
+          console.log(error);
+      });
+}
+
+function FnIngresar(){
+  var email = $$('#email-ingreso').value();
+  var password= $$('#pass-ingreso').value();
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+  .then(()=>{
+    console.log('entre');
+  } )
+
+}
