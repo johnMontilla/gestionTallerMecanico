@@ -38,26 +38,8 @@
         <div class="statusbar"></div>
     
         <!-- Your main view, should have "view-main" class -->
-        <div class="view view-main">
-       
-            <!-- Top Navbar -->
-            <!-- <div class="navbar">
-                <div class="navbar-bg"></div>
-                <div class="navbar-inner">
-                    <div class="left"><i class="icon icon-back"></i></div>
-                    <div class="title">Page Title</div>
-                    <div class="right"><i class="icon icon-forward"></i></div>
-                </div>
-            </div> -->
-    
-            <!-- Toolbar -->
-            <!-- <div class="toolbar toolbar-bottom">
-                <div class="toolbar-inner"> -->
-                <!-- Toolbar links -->
-                <!-- <a href="#" class="link">Link 1</a>
-                <a href="#" class="link">Link 2</a>
-                </div>
-            </div> -->
+        <div class="view view-main">       
+           
         
         <!-- Initial Page, "data-name" contains page name -->
             <div data-name="index" class="page">
@@ -73,7 +55,7 @@
                                   <div class="item-inner">
                                     <div class="item-title item-label">Usuario</div>
                                     <div class="item-input-wrap">
-                                      <input id="email-ingreso" type="text" name="username" placeholder="Tu email" />
+                                      <input id="email-ingreso" type="text" name="username" placeholder="Tu email" value="mm@gmail.com"/>
                                     </div>
                                   </div>
                                 </li>
@@ -81,7 +63,7 @@
                                   <div class="item-inner">
                                     <div class="item-title item-label">Contraseña</div>
                                     <div class="item-input-wrap">
-                                      <input id="pass-ingreso" type="password" name="password" placeholder="Tu contraseña" />
+                                      <input id="pass-ingreso" type="password" name="password" placeholder="Tu contraseña" value="123456" />
                                     </div>
                                   </div>
                                 </li>
@@ -109,6 +91,7 @@
      https://firebase.google.com/docs/web/setup#available-libraries -->
      
 <script src="https://www.gstatic.com/firebasejs/8.2.7/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.7/firebase-firestore.js"></script>
 
 <script>
   // Your web app's Firebase configuration

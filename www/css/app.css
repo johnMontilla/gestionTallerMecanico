@@ -1,4 +1,38 @@
 /* Your app custom styles here */
+.text-editor {
+  height: 150px;
+}
+
+.skeleton-text, .skeleton-text * {
+  color: black  !important;
+}
+
+.visible{
+  display: block;
+  visibility: visible;
+}
+
+.oculto{
+  display: none;
+  visibility: hidden;    
+}
+
+.lupa-icono{
+height: 48px;
+width: 40px;
+}
+
+.boton-buscar{
+  margin: 8px 8px 8px 0!important;
+}
+
+.buscar{
+  padding-left: 20px !important;
+}
+
+.page-content .searchbar:not(.searchbar-inline) {
+  width: 100vw;
+}
 /* poppins-regular - latin */
 @font-face {
   font-family: 'Poppins';
