@@ -35,6 +35,15 @@ var app = new Framework7({
         path: '/autos/',
         url: 'autos.html'
       },
+      {
+        path: '/turnos/',
+        url: 'turnos.html'
+      },
+      {
+        path: '/horarios/',
+        url: 'horarios.html',
+        
+      },
     ]
     // ... other parameters
   });
@@ -44,11 +53,18 @@ var mainView = app.views.create('.view-main');
 var db = firebase.firestore();
 var usuarios = db.collection('usuarios');
 var clientes = db.collection('clientes');
+var turnos = db.collection('turnos');
 
 var datosUsuario ;
 var dni ;
 
 var barra = true;
+
+var calendar;
+var consulta;
+var hora;
+var dia;
+arrHorarios = ['09:00','09:20','09:40','10:00','10:20','10:40','11:00','11:20','12:00','12:20','12:40','13:00','13:20','13:40', '14:00','14:20','14:40','15:00','15:20','15:40', '16:00', '16:20', '16:40','17:00',]
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -57,6 +73,16 @@ $$(document).on('deviceready', function() {
 
 $$(document).on('page:init', function (e) {   
     console.log(e);    
+     
+    let dia = new Date()
+    console.log(dia)
+     key = dia.getDate().toString() +'-' + (dia.getMonth() + 1).toString() + '-' + dia.getFullYear().toString(); 
+    turnos.doc(key).get()          
+    .then((doc) => {
+      if (doc.exists){            
+        consulta = doc.data();                
+      }
+    })
 })
 
 // ***INDEX***
@@ -90,7 +116,12 @@ $$(document).on('page:init', '.page[data-name="inicio"]', function(e) {
     mainView.router.navigate('/autos/');
     console.log('entre en ingresar auto');   
     barra = true;
-  })  
+  }) 
+  
+  $$('#turnos').on('click', function(){
+    mainView.router.navigate('/turnos/');
+    console.log('entre en turnos');    
+  })
 })
 
 // ***CLIENTES***
@@ -111,12 +142,50 @@ $$(document).on('page:init', '.page[data-name="autos"]',function(e){
   $$('.volver-inicio' ).on('click', FnVolverInicio);
   
   if(barra){
-    $$('#barra-busqueda').removeClass('oculto');    
+    $$('#barra-busqueda').removeClass('oculto');  
+    $$('#barra-busqueda').addClass('display-flex');  
   }else{
     FncargardatosCliente();
   }
   $$('#buscar').on('click', FnBuscarPersona);
 })
+
+//***TURNOS***
+$$(document).on('page:init', '.page[data-name="turnos"]',function(e){
+  console.log(e);
+  $$('#horarios2').empty();
+  FnMostrarTurnos();
+  Fncalendario();  
+  $$('.back-inicio').on('click', function () {
+    mainView.router.navigate('/inicio/')
+    $$('#horarios').empty();
+  })
+})
+
+// ***HORARIOS***
+$$(document).on('page:init', '.page[data-name="horarios"]', function (e) {
+    
+  FnMostrarTurnos();  
+
+  $$('.disponible').on('click', function(){
+  console.log('entre en calendario'); 
+  FnCambiarHora(this.id);  
+  })
+
+  $$('.popup-about').on('popup:closed', function (e) {
+    console.log('About popup open');    
+    app.form.removeFormData('#my-form-turno');
+  });  
+
+  $$('#agendar-turno').on('click', FnAgendarTurno);
+
+  $$('.back-turnos').on('click', function () {
+    mainView.router.navigate('/turnos/')
+    $$('#horarios').empty();
+  })  
+})
+   
+
 
 // mis funciones
 
@@ -170,15 +239,9 @@ function FnTomarDatosCliente (){
   formData.autos= [];
   clientes.doc(dni).set(formData)
   .then(()=>{
-   clientes.where("documento", "==", `${dni}`).get()   
-    .then(function(querySnapshot) {      
-      querySnapshot.forEach(function(doc) {
-        datosUsuario= doc.data();      
-      });
-     
-      mainView.router.navigate('/autos/');
-    })        
-  })
+   datosUsuario= formData;          
+   mainView.router.navigate('/autos/');
+  }) 
   .catch((error)=> {                  
     console.error("Error writing document: ", error);
   });      
@@ -211,19 +274,237 @@ function FnMostarForm(){
 
 function FnBuscarPersona(){
   var datos = $$('#buscar-dni').val();
-  clientes.where("documento", "==", `${datos}`).get()   
-    .then(function(querySnapshot) {
-      querySnapshot.forEach(function(doc) {
+  clientes.doc(datos).get()
+  .then((doc) => {
+    if (doc.exists) {
+        console.log("Document data:", doc.data());
         datosUsuario= doc.data(); 
-        console.log(datosUsuario); 
-        FncargardatosCliente();
-        dni= datosUsuario.documento;    
-      })                    
-    })        
+        FncargardatosCliente();        
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+  })
 }
+  
 
 function FnVolverInicio(){
   app.form.removeFormData('#my-form-autos');
-  app.form.removeFormData('#my-form');
+  app.form.removeFormData('#my-form');  
   mainView.router.navigate('/inicio/');
+}
+
+function FnCambiarHora(id){
+  console.log(id)
+  hora = id;
+  hora = hora.replace('h','');  
+  $$('#horario-turno').text('horario de: ' + hora)
+  console.log(hora)
+    
+}
+
+function FnAgendarTurno() {
+  var formData = app.form.convertToData('#my-form-turno');
+  console.log(formData);
+  let horario = { cliente : formData.cliente, documento:formData.documento, libre: false}  ;
+  let key = FnFecha(calendar);
+  switch (hora) {
+  case '09:00':
+    turnos.doc(key).update({'09:00': horario});
+    break;
+  case '09:20':
+    turnos.doc(key).update({'09:20': horario});
+    break;
+  case '09:40':
+    turnos.doc(key).update({'09:40': horario});
+    break;
+  case '10:00':
+    turnos.doc(key).update({'10:00': horario});
+    break;
+  case '10:20':
+    turnos.doc(key).update({'10:20': horario});
+    break;
+  case '10:40':
+    turnos.doc(key).update({'10:40': horario});
+    break;
+  case '11:00':
+    turnos.doc(key).update({'11:00': horario});
+    break;
+  case '11:20':
+    turnos.doc(key).update({'11:20': horario});
+    break;
+  case '11:40':
+    turnos.doc(key).update({'11:40': horario});
+    break;
+  case '12:00':
+    turnos.doc(key).update({'12:00': horario});
+    break;
+  case '12:20':
+    turnos.doc(key).update({'12:20': horario});
+    break;
+  case '12:40':
+    turnos.doc(key).update({'12:40': horario});
+    break;
+  case '13:00':
+    turnos.doc(key).update({'13:00': horario});
+    break;
+  case '13:20':
+    turnos.doc(key).update({'13:20': horario});
+    break;
+  case '13:40':
+    turnos.doc(key).update({'13:40': horario});
+    break;
+  case '14:00':
+    turnos.doc(key).update({'14:00': horario});
+    break;
+  case '14:20':
+    turnos.doc(key).update({'14:20': horario});
+    break;
+  case '14:40':
+    turnos.doc(key).update({'14:40': horario});
+    break;
+  case '15:00':
+    turnos.doc(key).update({'15:00': horario});
+    break;
+  case '15:20':
+    turnos.doc(key).update({'15:20': horario});
+    break;
+  case '15:40':
+    turnos.doc(key).update({'15:40': horario});
+    break;
+  case '16:00':
+    turnos.doc(key).update({'16:00': horario});
+    break;
+  case '16:20':
+    turnos.doc(key).update({'16:20': horario});
+    break;
+  case '16:40':
+    turnos.doc(key).update({'16:40': horario});
+    break;
+  case '17:00':
+    turnos.doc(key).update({'17:00': horario});
+    break;
+  default:
+    console.log('no hay turnos')
+    break;
+
+  } 
+  mainView.router.navigate(`/turnos/`); 
+}
+
+function FnFecha(calendar) {
+ dia = calendar.getValue() ; 
+return dia[0].getDate().toString() +'-' + (dia[0].getMonth() + 1).toString() + '-' + dia[0].getFullYear().toString(); 
+}
+
+function FnHorarios(key , obj) {  
+  console.log(arrHorarios[0])  
+  turnos.doc(key).set({
+    '09:00':obj, '09:20':obj,'09:40':obj,'10:00':obj,'10:20':obj,'10:40':obj,'11:00':obj,'11:20':obj,'11:40':obj,'12:00':obj,'12:20':obj,'12:40':obj,'13:00':obj,'13:20':obj,'13:40':obj,'14:00':obj,'14:20':obj,'14:40':obj,'15:00':obj,'15:20':obj,'15:40':obj,'16:00':obj,'16:20':obj,'16:40':obj,'17:00':obj,
+  });
+  
+}
+
+
+
+function Fncalendario(){
+  calendar = app.calendar.create({
+    inputEl: '#demo-calendar-date-format',
+    dateFormat: { weekday: 'long', month: 'long', day: '2-digit', year: 'numeric' },
+    closeOnSelect: true,
+    minDate:new Date(),   
+   
+    disabled: [new Date(2021, 02, 17), new Date(2021, 02, 18)],
+    events:[
+      {
+        date: new Date(2021, 02, 25),
+        color: '#2196f3',
+        cssClass: 'azul',
+        background: 'blue',
+      },
+      // same date but different color, one more dot will be added to this day
+      {
+        date: new Date(2021, 02, 18),
+        color: '#4caf50',
+        background: 'aqua',
+      },
+    ],
+    
+    rangesClasses: [
+      //Add "day-october' class for all october dates
+      {
+          // string CSS class name for this range in "cssClass" property
+          cssClass: 'azul', //string CSS class
+          // Date Range in "range" property
+          range: function (date) {
+              return date.getDate() === 25
+          }
+      },
+      //Add "day-holiday" class for 1-10th January 2016
+      {
+        cssClass: 'azul',
+        
+        range: {
+          // from: new Date(2021, 02, 17),
+          // to: new Date(2021, 02, 17)
+          date: new Date(2021, 02, 22),
+        },
+          
+      }
+    ],
+    
+    on: {
+      closed: function () {
+        $$('#horarios').empty();
+        FnCargarTurnos();
+               
+      }      
+    }
+  })
+  calendar.setValue([Date.now()])
+}
+
+function FnCargarTurnos() {
+  let key = FnFecha(calendar);  
+  
+  turnos.doc(key).get()          
+  .then((doc) => {
+    if (doc.exists){            
+      consulta = doc.data();            
+      mainView.router.navigate(`/horarios/`);
+       
+    } else {            
+      console.log("No such document!");
+      let obj= {'cliente': '', 'documento':'' , 'libre': true , }            
+      FnHorarios(key, obj);
+      turnos.doc(key).get()          
+      .then((doc) => {
+        if (doc.exists){            
+          consulta = doc.data(); 
+          console.log('cree el doc '+consulta);
+          mainView.router.navigate(`/horarios/`);
+        }              
+      })
+    }           
+  })
+}
+
+function FnMostrarTurnos() {
+   
+  let objeto = consulta
+  for(let i = 0 ; i< arrHorarios.length; i++){
+    for (let property in objeto) {      
+      if(property == arrHorarios[i]  ){
+        if(objeto[property].libre == false){
+          $$('#horarios'  ).append(`<li class='disponible popup-open' data-popup=".popup-about" id='h${arrHorarios[i]}'>${property} <br> Cliente: ${objeto[property].cliente} <br> Documento: ${objeto[property].documento} </li>`);
+          $$('#horarios2'  ).append(`<li class=' popup-open' data-popup=".popup-about" id='h${arrHorarios[i]}'>${property} <br> Cliente: ${objeto[property].cliente} <br> Documento: ${objeto[property].documento} </li>`);      
+        }
+        else{
+          $$('#horarios'  ).append(`<li class='disponible popup-open' data-popup=".popup-about" id='h${arrHorarios[i]}'>${property} <br>libre</li>`);
+          $$('#horarios2'  ).append(`<li class=' popup-open' data-popup=".popup-about" id='h${arrHorarios[i]}'>${property} <br>libre</li>`);
+        }
+      }
+      
+    }
+  }
 }

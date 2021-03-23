@@ -11,6 +11,9 @@
   display: block;
   visibility: visible;
 }
+.azul{
+  background: blueviolet;
+}
 
 .oculto{
   display: none;
