@@ -41,12 +41,15 @@ var app = new Framework7({
       },
       {
         path: '/horarios/',
-        url: 'horarios.html',
-        
+        url: 'horarios.html',        
+      },
+      {
+        path: '/registro-auto/',
+        url: 'registro-auto.html',        
       },
     ]
     // ... other parameters
-  });
+});
 
 var mainView = app.views.create('.view-main');
 
@@ -54,9 +57,14 @@ var db = firebase.firestore();
 var usuarios = db.collection('usuarios');
 var clientes = db.collection('clientes');
 var turnos = db.collection('turnos');
+var autos = db.collection('autos');
+var diagnostico= db.collection('diagnostico');
 
 var datosUsuario ;
 var dni ;
+var datosAuto;
+var dniAuto;
+var idDato;
 
 var barra = true;
 
@@ -64,7 +72,7 @@ var calendar;
 var consulta;
 var hora;
 var dia;
-arrHorarios = ['09:00','09:20','09:40','10:00','10:20','10:40','11:00','11:20','12:00','12:20','12:40','13:00','13:20','13:40', '14:00','14:20','14:40','15:00','15:20','15:40', '16:00', '16:20', '16:40','17:00',]
+var arrHorarios = ['09:00','09:20','09:40','10:00','10:20','10:40','11:00','11:20','12:00','12:20','12:40','13:00','13:20','13:40', '14:00','14:20','14:40','15:00','15:20','15:40', '16:00', '16:20', '16:40','17:00',]
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -76,7 +84,7 @@ $$(document).on('page:init', function (e) {
      
     let dia = new Date()
     console.log(dia)
-     key = dia.getDate().toString() +'-' + (dia.getMonth() + 1).toString() + '-' + dia.getFullYear().toString(); 
+    key = dia.getDate().toString() +'-' + (dia.getMonth() + 1).toString() + '-' + dia.getFullYear().toString(); 
     turnos.doc(key).get()          
     .then((doc) => {
       if (doc.exists){            
@@ -122,6 +130,10 @@ $$(document).on('page:init', '.page[data-name="inicio"]', function(e) {
     mainView.router.navigate('/turnos/');
     console.log('entre en turnos');    
   })
+
+  $$('#diagnostico').on('click', function () {
+    db.collection('clientes').doc('11111').collection('autos').doc('qwe123').get().then((doc)=>{if (doc.exists){console.log(doc.data())}})
+  })
 })
 
 // ***CLIENTES***
@@ -133,21 +145,28 @@ $$(document).on('page:init', '.page[data-name="clientes"]',function(e){
 
 // ***AUTOS***
 $$(document).on('page:init', '.page[data-name="autos"]',function(e){
-  console.log(e);
-  console.log(barra);
-  $$('#datos').text(JSON.stringify(datosUsuario));
-  $$('.convert-form-to-data').on('click', FnTomarDatosAuto);   
+  console.log(e);  
+  console.log(barra);        
  
-  $$('#registrar-auto').on('click', FnMostarForm);
-  $$('.volver-inicio' ).on('click', FnVolverInicio);
+  $$('#nuevo-auto').on('click', function () {
+    barra = true;
+    mainView.router.navigate('/registro-auto/');
+  });  
   
-  if(barra){
-    $$('#barra-busqueda').removeClass('oculto');  
-    $$('#barra-busqueda').addClass('display-flex');  
-  }else{
-    FncargardatosCliente();
-  }
-  $$('#buscar').on('click', FnBuscarPersona);
+  $$('#btn-buscar').on('click', function(){
+    console.log('entre en buscar')
+    $$('#barra-busqueda-auto ').removeClass('oculto');  
+    $$('#barra-busqueda-auto').addClass('display-flex');
+    $$('#nuevo-auto ,#btn-buscar').addClass('oculto');
+  }) 
+  
+  $$('#buscar-auto').on('click', FnBuscarAuto);
+  $$('.agregar-datos').on('click', function(){
+    FnAgregarDatos(this.id);
+  }) 
+
+  $$('#aceptar-auto').on('click', FnCargarDiagPres); 
+  $$('#cancelar-auto').on('click', FnVolverDiagPres);
 })
 
 //***TURNOS***
@@ -183,6 +202,25 @@ $$(document).on('page:init', '.page[data-name="horarios"]', function (e) {
     mainView.router.navigate('/turnos/')
     $$('#horarios').empty();
   })  
+})
+
+// ***REGISTRO AUTO***
+$$(document).on('page:init', '.page[data-name="registro-auto"]',function(e){
+  console.log(e);  
+  console.log(barra);   
+  $$('.convert-form-to-data').on('click', FnTomarDatosAuto);   
+ 
+  $$('#registrar-auto').on('click', FnMostarForm);
+  $$('.volver-inicio' ).on('click', FnVolverInicio);
+  
+  if(barra){
+    $$('#barra-busqueda').removeClass('oculto');  
+    $$('#barra-busqueda').addClass('display-flex');  
+  }
+  else{
+    FncargardatosCliente();
+  }
+  $$('#buscar').on('click', FnBuscarPersona);
 })
    
 
@@ -227,20 +265,20 @@ function FnIngresar(){
   firebase.auth().signInWithEmailAndPassword(email, password)
   .then(()=>{
     console.log('entre');
+    app.form.removeFormData('#my-form'); 
     mainView.router.navigate('/inicio/');
   } )
 }
 
-
 function FnTomarDatosCliente (){
   barra = false;
   var formData = app.form.convertToData('#my-form');
-  dni = formData.documento;
-  formData.autos= [];
+  dni = formData.documento;  
   clientes.doc(dni).set(formData)
   .then(()=>{
-   datosUsuario= formData;          
-   mainView.router.navigate('/autos/');
+   datosUsuario= formData;   
+   app.form.removeFormData('#my-form');        
+   mainView.router.navigate('/registro-auto/');
   }) 
   .catch((error)=> {                  
     console.error("Error writing document: ", error);
@@ -248,10 +286,13 @@ function FnTomarDatosCliente (){
 }
 
 function FnTomarDatosAuto(){
-  var auto = app.form.convertToData('#my-form-autos');  
+  var auto = app.form.convertToData('#my-form-autos'); 
+  auto.dni = dni ;
   console.log(auto);  
-  db.collection('clientes').doc(dni).collection('autos').doc(auto.patente).set(auto)
+  console.log(dni)
+  autos.doc(auto.patente).set(auto)
   .then(()=>{
+    app.form.removeFormData('#my-form-autos');
     mainView.router.navigate('/inicio/');
   })
   .catch((error)=> {                  
@@ -265,6 +306,8 @@ function FncargardatosCliente(){
   $$('#telefono').text(`${datosUsuario.telefono} `);
   $$('#email').text(`${datosUsuario.email} `);
   $$('#direccion').text(`${datosUsuario.direccion} `);
+  dni = datosUsuario.documento;
+  console.log(dni)
 }
 
 function FnMostarForm(){
@@ -286,7 +329,62 @@ function FnBuscarPersona(){
     }
   })
 }
+
+function FnBuscarAuto(){
+  $$('#diagnostico-presupuesto').addClass('oculto');
+  var datos = $$('#buscar-patente').val();
+  console.log(datos)
+  autos.doc(datos).get()
+  .then((doc) => {
+    if (doc.exists) {
+        console.log("Document data:", doc.data());
+        datosAuto= doc.data(); 
+        $$('#datos-auto ,#btn-diag-presu').removeClass('oculto');
+        FncargardatosAuto();        
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+  })
+}
+
+function FncargardatosAuto(){
+  $$('#patente').text(`Patente: ${datosAuto.patente} `);
+  $$('#color').text(`Color: ${datosAuto.color} `);
+  $$('#kilometraje').text(`Km: ${datosAuto.kilometraje} `);
+  $$('#marca').text(`Marca: ${datosAuto.marca} `);
+  $$('#modelo').text(`Modelo: ${datosAuto.modelo} `);
+  dniAuto = datosAuto.dni;  
+  console.log(dniAuto);
+}
+
+function FnAgregarDatos(id){  
+  $$('#diagnostico-presupuesto').removeClass('oculto');
+  $$('#btn-diag-presu').addClass('oculto');
+  idDato= id.charAt(0).toUpperCase() + id.slice(1);
+  $$('#titulo-dato').text(idDato); 
   
+  console.log(idDato)
+  
+
+}
+
+function FnCargarDiagPres() {
+  let descripcion = $$('#descripcion').val();
+  console.log(descripcion)
+  var fechaEnMiliseg = Date.now();
+  db.collection(`${idDato}`).doc(datosAuto.patente + '-' + fechaEnMiliseg ).set({ descripcion: descripcion, fecha: new Date(), patente: datosAuto.patente})
+  .then(()=>{
+    FnVolverDiagPres()
+  })
+}
+
+function FnVolverDiagPres() {
+  $$('#diagnostico-presupuesto').addClass('oculto');
+    $$('#btn-diag-presu').removeClass('oculto');
+    $$('#descripcion').val('');
+}
+
 
 function FnVolverInicio(){
   app.form.removeFormData('#my-form-autos');
@@ -404,8 +502,6 @@ function FnHorarios(key , obj) {
   });
   
 }
-
-
 
 function Fncalendario(){
   calendar = app.calendar.create({

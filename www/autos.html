@@ -14,11 +14,11 @@
     
     <div class="page-content">       
 
-        <div class="oculto " id="barra-busqueda">
+        <div class="oculto " id="barra-busqueda-auto">
             <form class="searchbar">
                 <div class="searchbar-inner">
                     <div class="searchbar-input-wrap">
-                    <input id="buscar-dni" class="buscar" type="search" placeholder="Buscar cliente por DNI" />
+                    <input id="buscar-patente" class="buscar" type="search" placeholder="Buscar auto por patente" />
                     
                     <span class="input-clear-button"></span>
                     </div>                
@@ -26,10 +26,12 @@
                 </div>      
                      
             </form>
-            <div class="col boton-buscar"><a class="button  button-raised lupa-icono" href="#" id="buscar"><i class="searchbar-icon"></i></a></div> 
+            <div class="col boton-buscar"><a class="button  button-raised lupa-icono" href="#" id="buscar-auto"><i class="searchbar-icon"></i></a></div> 
         </div>  
         
-        <div class="list media-list skeleton-text">
+       
+        
+        <div class="list media-list skeleton-text oculto" id="datos-auto">
             <ul>
             <li class="item-content">
                 <div class="item-media">
@@ -37,100 +39,41 @@
                 </div>
                 <div class="item-inner">
                     <div class="item-title-row">
-                        <div class="item-title" id="nombreApellido" >Nombre</div>
+                        <div class="item-title" id="patente" >Patente</div>
                     </div>
-                    <div class="item-subtitle" id="dni" >DNI</div>
-                    <div class="item-subtitle" id="telefono" >Telefono</div>
-                    <div class="item-subtitle" id="email" >Email</div>
-                    <div class="item-subtitle" id="direccion" >Direccion</div> 
+                    <div class="item-subtitle" id="color" >Color</div>
+                    <div class="item-subtitle" id="kilometraje" >kilometraje</div>
+                    <div class="item-subtitle" id="marca" >Marca</div>
+                    <div class="item-subtitle" id="modelo" >Modelo</div> 
                 </div>
             </li>              
             </ul>
         </div>
-        <div class="block block-strong row" id="contenedor-agregar-auto">
-            <div class="col"><a class="button button-fill " href="#" id="registrar-auto">Agregar Auto</a></div>
-            <div class="col"><a class="button button-fill volver-inicio" href="#" id="finalizar">Finalizar</a></div>
-          </div>
 
-        <form class="list form-store-data oculto" id="my-form-autos">
-            <ul>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Patente</div>
-                        <div class="item-input-wrap">
-                        <input id="Patente" type="text" name="patente" placeholder="Patente" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Modelo</div>
-                        <div class="item-input-wrap">
-                        <input  id="modelo" type="text" name="modelo" placeholder="Modelo" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Color</div>
-                        <div class="item-input-wrap">
-                        <input  id="color" type="text" name="color" placeholder="Color" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Marca</div>
-                        <div class="item-input-wrap">
-                        <input id="marca" type="text" name="marca" placeholder="Marca" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">vercion</div>
-                        <div class="item-input-wrap">
-                        <input  id="vercion" type="text" name="vercion" placeholder="Vercion" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Kilometraje</div>
-                        <div class="item-input-wrap">
-                        <input id="kilometraje" type="number" name="kilometraje" placeholder="Kilometraje" />
-                        </div>
-                    </div>
-                    </div>
-                </li> 
-                <li>
-                    <div class="block-title">Descripcion del problema</div>
-                    <div class="text-editor ">
-                        <div class="text-editor-content" contenteditable id="problema"></div>
-                    </div>
-                </li>         
-                <li>
-                    <div class="block-title">Estado del vehiculo</div>
-                    <div class="text-editor " id="datos">
-                        <div class="text-editor-content" contenteditable id="estado"></div>
-                    </div>
-                </li>       
-            </ul>
-                <div class="block block-strong row">
-                <div class="col"><a class="button button-fill convert-form-to-data" href="#" id="registrar-usuario">Registrar</a></div>
-                <div class="col"><a class="button button-fill  volver-inicio" href="#" id="cancelar">Cancelar</a></div>
-              </div>
-          </form>
-  </div>
+        
+        <div class="item-inner block block-strong oculto" id="diagnostico-presupuesto">
+            <div class="item-title item-label" id="titulo-dato"></div>
+            <div class="item-input-wrap">
+                <textarea id="descripcion" class="text-editor-content" contenteditable></textarea>
+            </div>
+            <div class="block block-strong row">
+                <div class="col"><a class="button button-fill " href="#" id="aceptar-auto">aceptar</a></div>
+                <div class="col"><a class="button button-fill " href="#" id="cancelar-auto">cancelar</a></div>
+                
+            </div>
+        </div>
+         
+        <div class="block block-strong  oculto" id="btn-diag-presu">
+            <p><div class="col"><a class="button button-fill agregar-datos " href="#" id="diagnostico">Agregar Diagnostio</a></div></p>
+            <p><div class="col"><a class="button button-fill  agregar-datos" href="#" id="presupuesto">Agregar Presupuesto</a></div></p>
+            <p><div class="col"><a class="button button-fill  " href="#" id="hoja-ruta">Ver hoja de ruta</a></div></p>
+            
+        </div>
+        
+        <div class="block block-strong row">
+            <div class="col"><a class="button button-fill " href="#" id="nuevo-auto">Nuevo auto</a></div>
+            <div class="col"><a class="button button-fill " href="#" id="btn-buscar">Buscar auto</a></div>
+            
+        </div>
+          
 </div>

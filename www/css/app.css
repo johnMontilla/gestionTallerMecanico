@@ -2,6 +2,9 @@
 .text-editor {
   height: 150px;
 }
+.text-editor-content{
+  width: 100%;
+}
 
 .skeleton-text, .skeleton-text * {
   color: black  !important;
