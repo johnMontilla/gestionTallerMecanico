@@ -5,6 +5,11 @@
 .text-editor-content{
   width: 100%;
 }
+.barra-cliente-visible{
+  width: 360px;
+  display: inline-flex;
+}
+
 
 .skeleton-text, .skeleton-text * {
   color: black  !important;

@@ -28,6 +28,10 @@ var app = new Framework7({
         url: 'inicio.html'
       },
       {
+        path: '/clientes-registo/',
+        url: 'clientes-registo.html'
+      },
+      {
         path: '/clientes/',
         url: 'clientes.html'
       },
@@ -59,6 +63,7 @@ var clientes = db.collection('clientes');
 var turnos = db.collection('turnos');
 var autos = db.collection('autos');
 var diagnostico= db.collection('diagnostico');
+var presupuesto= db.collection('presupuesto');
 
 var datosUsuario ;
 var dni ;
@@ -82,8 +87,7 @@ $$(document).on('deviceready', function() {
 $$(document).on('page:init', function (e) {   
     console.log(e);    
      
-    let dia = new Date()
-    console.log(dia)
+    let dia = new Date()    
     key = dia.getDate().toString() +'-' + (dia.getMonth() + 1).toString() + '-' + dia.getFullYear().toString(); 
     turnos.doc(key).get()          
     .then((doc) => {
@@ -136,11 +140,31 @@ $$(document).on('page:init', '.page[data-name="inicio"]', function(e) {
   })
 })
 
-// ***CLIENTES***
-$$(document).on('page:init', '.page[data-name="clientes"]',function(e){
+// ***CLIENTES-REGISTO***
+$$(document).on('page:init', '.page[data-name="clientes-registo"]',function(e){
   console.log(e);
   $$('.convert-form-to-data').on('click', FnTomarDatosCliente);   
   $$('.volver-inicio' ).on('click', FnVolverInicio);
+})
+// ***CLIENTES***
+$$(document).on('page:init', '.page[data-name="clientes"]',function(e){
+  console.log(e);
+  $$('#nuevo-cliente').on('click', function(){    
+    mainView.router.navigate('/clientes-registo/');
+  });
+
+  $$('#btn-buscar-cliente' ).on('click',function(){
+    $$('#barra-busqueda-cliente' ).removeClass('oculto');
+    $$('#barra-busqueda-cliente' ).addClass('barra-cliente-visible');
+    $$('#nuevo-cliente-btn-buscar-cliente').addClass('oculto')
+  });
+
+  $$('#buscar-cliente').on('click', function(){
+    
+    var datos = $$('#inp-buscar-cliente').val();
+    FnBuscarPersona(datos);
+    FnBuscarCargarAuto();
+  });
 })
 
 // ***AUTOS***
@@ -157,7 +181,7 @@ $$(document).on('page:init', '.page[data-name="autos"]',function(e){
     console.log('entre en buscar')
     $$('#barra-busqueda-auto ').removeClass('oculto');  
     $$('#barra-busqueda-auto').addClass('display-flex');
-    $$('#nuevo-auto ,#btn-buscar').addClass('oculto');
+    $$('#nuevo-auto-btn-buscar').addClass('oculto');
   }) 
   
   $$('#buscar-auto').on('click', FnBuscarAuto);
@@ -166,7 +190,9 @@ $$(document).on('page:init', '.page[data-name="autos"]',function(e){
   }) 
 
   $$('#aceptar-auto').on('click', FnCargarDiagPres); 
-  $$('#cancelar-auto').on('click', FnVolverDiagPres);
+  $$('#cancelar-auto').on('click', FnVolverDiagPres); 
+  $$('#hoja-ruta').on('click', FnHojaRuta)
+  
 })
 
 //***TURNOS***
@@ -215,12 +241,16 @@ $$(document).on('page:init', '.page[data-name="registro-auto"]',function(e){
   
   if(barra){
     $$('#barra-busqueda').removeClass('oculto');  
-    $$('#barra-busqueda').addClass('display-flex');  
+    $$('#barra-busqueda').addClass('display-flex');
+    $$('#datos-cliente').addClass('oculto');  
   }
   else{
     FncargardatosCliente();
   }
-  $$('#buscar').on('click', FnBuscarPersona);
+  $$('#buscar').on('click', function(){
+    var datos = $$('#buscar-dni').val();
+    FnBuscarPersona(datos)
+  });
 })
    
 
@@ -288,6 +318,7 @@ function FnTomarDatosCliente (){
 function FnTomarDatosAuto(){
   var auto = app.form.convertToData('#my-form-autos'); 
   auto.dni = dni ;
+  auto.fecha = new Date();
   console.log(auto);  
   console.log(dni)
   autos.doc(auto.patente).set(auto)
@@ -301,11 +332,13 @@ function FnTomarDatosAuto(){
 }
 
 function FncargardatosCliente(){
-  $$('#nombreApellido').text(`${datosUsuario.nombre} ${datosUsuario.apellido}`);
-  $$('#dni').text(`${datosUsuario.documento} `);
-  $$('#telefono').text(`${datosUsuario.telefono} `);
-  $$('#email').text(`${datosUsuario.email} `);
-  $$('#direccion').text(`${datosUsuario.direccion} `);
+  $$('#datos-cliente,#resultado-cliente ').removeClass('oculto');
+  $$('#contenedor-agregar-auto').removeClass('oculto');  
+  $$('#nombreApellido, #nombreApellido-busqueda').text(`Nombre: ${datosUsuario.nombre} ${datosUsuario.apellido}`);
+  $$('#dni , #dni-busqueda').text(`DNI: ${datosUsuario.documento} `);
+  $$('#telefono,#telefono-busqueda').text(`Telefono: ${datosUsuario.telefono} `);
+  $$('#email,#email-busqueda').text(`Email: ${datosUsuario.email} `);
+  $$('#direccion, #direccion-busqueda').text(`Direccion: ${datosUsuario.direccion} `);
   dni = datosUsuario.documento;
   console.log(dni)
 }
@@ -315,8 +348,7 @@ function FnMostarForm(){
   $$('#my-form-autos').removeClass('oculto');
 }
 
-function FnBuscarPersona(){
-  var datos = $$('#buscar-dni').val();
+function FnBuscarPersona(datos){  
   clientes.doc(datos).get()
   .then((doc) => {
     if (doc.exists) {
@@ -327,6 +359,34 @@ function FnBuscarPersona(){
         // doc.data() will be undefined in this case
         console.log("No such document!");
     }
+  })
+}
+
+function FnBuscarCargarAuto(){
+  var datos = $$('#inp-buscar-cliente').val();
+  autos.where('dni', '==', datos).get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      $$('#lista-autos').append(`<li>
+      <div class="item-content">
+        <!-- <div class="item-media">
+          <img src="https://cdn.framework7.io/placeholder/people-160x160-1.jpg" width="80" />
+        </div> -->
+        <div class="item-inner">
+          <div class="item-title-row">
+            <div class="item-title">Patente: ${doc.data().patente}</div>
+            
+          </div>
+          <div class="item-subtitle">Color: ${doc.data().color}</div>
+          <div class="item-subtitle">Marca: ${doc.data().marca}</div>
+          <div class="item-subtitle">vercion: ${doc.data().vercion}</div>
+          <div class="item-subtitle">modelo: ${doc.data().modelo}</div>
+          
+        </div>
+      </div>
+      <div class="sortable-handler"></div>
+    </li>`)
+    });
   })
 }
 
@@ -358,22 +418,65 @@ function FncargardatosAuto(){
   console.log(dniAuto);
 }
 
+function FnHojaRuta() {
+  // $$('#btn-diag-presu').addClass('oculto');
+  let array = []
+  autos.doc(datosAuto.patente).get()
+  .then((doc)=>{
+    if(doc.exists){
+      xxx = doc.data();
+       xxx.fecha =doc.data().fecha.toDate(); 
+       array.push(xxx); console.log(array[0].fecha.getTime())   
+    }
+    presupuesto.where('patente','==','pha990').get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        xxx = doc.data(); xxx.fecha =doc.data().fecha.toDate(); array.push(xxx);
+          
+      });
+      diagnostico.where('patente','==','pha990').get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          xxx = doc.data(); xxx.fecha =doc.data().fecha.toDate(); array.push(xxx);
+            
+        });
+        console.log(array.sort(function(a, b) { return new Date(a.fecha).getTime() - new Date(b.fecha).getTime()})) 
+        let meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+        console.log(array[2].fecha.getHours(), array[2].fecha.getSeconds(),  )   
+        for(let i = 0; i<array.length;i++){
+          $$('#hoja-ruta-lista').append(
+            `<div class="timeline-item">
+              <div class="timeline-item-date">${array[i].fecha.getDate()} <small>${meses[array[i].fecha.getMonth()]}</small></div>
+              <div class="timeline-item-divider"></div>
+              <div class="timeline-item-content">
+                <div class="timeline-item-inner">
+                  <div class="timeline-item-time">${array[i].fecha.getHours()}:${array[i].fecha.getMinutes()}</div>
+                  <div class="timeline-item-title">${array[i].estado}</div>
+                  
+                  <div class="timeline-item-text">${array[i].descripcion}</div>
+                </div>
+              </div>
+            </div>`
+          )
+        }    
+      })
+    })    
+  })
+}
+
 function FnAgregarDatos(id){  
+  $$('#hoja-ruta-lista').empty();
   $$('#diagnostico-presupuesto').removeClass('oculto');
   $$('#btn-diag-presu').addClass('oculto');
   idDato= id.charAt(0).toUpperCase() + id.slice(1);
-  $$('#titulo-dato').text(idDato); 
-  
+  $$('#titulo-dato').text(idDato);   
   console.log(idDato)
-  
-
 }
 
 function FnCargarDiagPres() {
   let descripcion = $$('#descripcion').val();
   console.log(descripcion)
   var fechaEnMiliseg = Date.now();
-  db.collection(`${idDato}`).doc(datosAuto.patente + '-' + fechaEnMiliseg ).set({ descripcion: descripcion, fecha: new Date(), patente: datosAuto.patente})
+  let doc = idDato.toLowerCase();
+  db.collection(`${doc}`).doc(datosAuto.patente + '-' + fechaEnMiliseg ).set({ descripcion: descripcion, fecha: new Date(), patente: datosAuto.patente, estado:idDato})
   .then(()=>{
     FnVolverDiagPres()
   })
@@ -384,7 +487,6 @@ function FnVolverDiagPres() {
     $$('#btn-diag-presu').removeClass('oculto');
     $$('#descripcion').val('');
 }
-
 
 function FnVolverInicio(){
   app.form.removeFormData('#my-form-autos');
@@ -510,44 +612,44 @@ function Fncalendario(){
     closeOnSelect: true,
     minDate:new Date(),   
    
-    disabled: [new Date(2021, 02, 17), new Date(2021, 02, 18)],
-    events:[
-      {
-        date: new Date(2021, 02, 25),
-        color: '#2196f3',
-        cssClass: 'azul',
-        background: 'blue',
-      },
-      // same date but different color, one more dot will be added to this day
-      {
-        date: new Date(2021, 02, 18),
-        color: '#4caf50',
-        background: 'aqua',
-      },
-    ],
+    // disabled: [new Date(2021, 02, 17), new Date(2021, 02, 18)],
+    // events:[
+    //   {
+    //     date: new Date(2021, 02, 25),
+    //     color: '#2196f3',
+    //     cssClass: 'azul',
+    //     background: 'blue',
+    //   },
+    //   // same date but different color, one more dot will be added to this day
+    //   {
+    //     date: new Date(2021, 02, 18),
+    //     color: '#4caf50',
+    //     background: 'aqua',
+    //   },
+    // ],
     
-    rangesClasses: [
-      //Add "day-october' class for all october dates
-      {
-          // string CSS class name for this range in "cssClass" property
-          cssClass: 'azul', //string CSS class
-          // Date Range in "range" property
-          range: function (date) {
-              return date.getDate() === 25
-          }
-      },
-      //Add "day-holiday" class for 1-10th January 2016
-      {
-        cssClass: 'azul',
+    // rangesClasses: [
+    //   //Add "day-october' class for all october dates
+    //   {
+    //       // string CSS class name for this range in "cssClass" property
+    //       // cssClass: 'azul', //string CSS class
+    //       // Date Range in "range" property
+    //       range: function (date) {
+    //           return date.getDate() === 25
+    //       }
+    //   },
+    //   //Add "day-holiday" class for 1-10th January 2016
+    //   {
+    //     cssClass: 'azul',
         
-        range: {
-          // from: new Date(2021, 02, 17),
-          // to: new Date(2021, 02, 17)
-          date: new Date(2021, 02, 22),
-        },
+    //     range: {
+    //       // from: new Date(2021, 02, 17),
+    //       // to: new Date(2021, 02, 17)
+    //       date: new Date(2021, 02, 22),
+    //     },
           
-      }
-    ],
+    //   }
+    // ],
     
     on: {
       closed: function () {

@@ -7,77 +7,59 @@
             <span class="ios-only">Back</span>
             </a>
         </div>
-        <div class="title">Ingreso de cliente</div>
-        </div>
+        <div class="title">Clientes</div>
+        </div>        
     </div>
-    <div class="page-content">        
-        <form class="list form-store-data" id="my-form">
+
+    
+    <div class="page-content">       
+
+        <div class="oculto " id="barra-busqueda-cliente">
+            <form class="searchbar">
+                <div class="searchbar-inner">
+                    <div class="searchbar-input-wrap">
+                    <input id="inp-buscar-cliente" class="buscar" type="search" placeholder="Buscar clinete por DNI" />
+                    
+                    <span class="input-clear-button"></span>
+                    </div>                
+                                                
+                </div>      
+                     
+            </form>
+            <div class="col boton-buscar"><a class="button  button-raised lupa-icono" href="#" id="buscar-cliente"><i class="searchbar-icon"></i></a></div> 
+        </div>  
+        
+       
+        
+        <div class="list media-list skeleton-text oculto" id="resultado-cliente">
             <ul>
-                <li>
-                    <div class="item-content item-input">
+                <li class="item-content">
+                    <div class="item-media">
+                    <div class="skeleton-block " style="width: 40px; height: 40px; border-radius: 50%"><img src="img/descarga.png" alt="" style="width: 45px;" ></div>
+                    </div>
                     <div class="item-inner">
-                        <div class="item-title item-label">Nombre </div>
-                        <div class="item-input-wrap">
-                        <input id="nombre-cliente" type="text" name="nombre" placeholder="Nombre del cliente" />
+                        <div class="item-title-row">
+                            <div class="item-title" id="nombreApellido-busqueda" >Nombre</div>
                         </div>
+                        <div class="item-subtitle" id="dni-busqueda" >DNI</div>
+                        <div class="item-subtitle" id="telefono-busqueda" >Telefono</div>
+                        <div class="item-subtitle" id="email-busqueda" >Email</div>
+                        <div class="item-subtitle" id="direccion-busqueda" >Direccion</div> 
                     </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Apellido</div>
-                        <div class="item-input-wrap">
-                        <input  id="apellido-cliente" type="text" name="apellido" placeholder="Apellido del cliente" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Documento</div>
-                        <div class="item-input-wrap">
-                        <input  id="documento-cliente" type="number" name="documento" placeholder="Documeto del cliente" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Direccion</div>
-                        <div class="item-input-wrap">
-                        <input id="direccion-cliente" type="text" name="direccion" placeholder="Direccion del cliente" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">Telefono</div>
-                        <div class="item-input-wrap">
-                        <input  id="telefono-cliente" type="tel" name="telefono" placeholder="Telefono del cliente" />
-                        </div>
-                    </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content item-input">
-                    <div class="item-inner">
-                        <div class="item-title item-label">E-mail</div>
-                        <div class="item-input-wrap">
-                        <input id="email-cliente" type="email" name="email" placeholder="E-mail del cliente" />
-                        </div>
-                    </div>
-                    </div>
-                </li>                                    
-            </ul>           
-          </form>
-          <div class="block block-strong row">
-            <div class="col"><a class="button button-fill convert-form-to-data " href="#" id="registrar-cliente">Registrar</a></div>
-            <div class="col"><a class="button button-fill fill-form-from-data volver-inicio" href="#" id="cancelar">Cancelar</a></div>
-          </div>          
-  </div>
+                </li>                
+            </ul>
+        </div>       
+       
+        
+        <div class="block block-strong row" id="nuevo-cliente-btn-buscar-cliente">
+            <div class="col"><a class="button button-fill " href="#" id="nuevo-cliente">Nuevo cliente</a></div>
+            <div class="col"><a class="button button-fill " href="#" id="btn-buscar-cliente">Buscar cliente</a></div>            
+        </div>   
+
+        <div class="list media-list sortable">
+            <ul id="lista-autos">
+              
+            </ul>
+        </div>
+    </div>          
 </div>
